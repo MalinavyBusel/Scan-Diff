@@ -1,16 +1,30 @@
+import tempfile
+
 from flask import Flask
 from flask import request, render_template
 
+from templates.get_form import GetForm
 
-@app.route('/', methods=['GET', 'POST'])
+
+app = Flask(__name__, template_folder="templates")
+app.config['UPLOAD_EXTENSIONS'] = ['.jpg', '.png']
+app.config['MAX_CONTENT_LENGTH'] = 1024 * 1024 * 16 - 1
+
+
+@app.route('/', methods=['GET', 'POST'])  # TODO версия
 def main():
-    # handle the POST request
-    if request.method == 'POST':
+    form = GetForm()
 
+    if form.validate_on_submit():
         pass
+        base = request.files['base_image']
+        compared = request.files['compared_image']
+        return render_template('some_template')
 
-    # otherwise handle the GET request
-    pass
+    return render_template(
+        "main_get.jinja2",
+        form=form,
+        template="form-template")
 
 
 if __name__ == "__main__":

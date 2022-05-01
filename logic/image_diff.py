@@ -3,6 +3,8 @@ import tempfile
 from PIL import Image, ImageFilter
 from pytesseract import Output
 
+from angle_getter import get_rotation_angle
+
 
 def create_image(input_file: 'FileStorage') -> Image:
     suff = input_file.filename.split('.')[-1]
@@ -15,9 +17,11 @@ def create_image(input_file: 'FileStorage') -> Image:
 
 
 def process_diff(base: Image, compared: Image):
-    # рассчитать поворот
+    rotate_base = get_rotation_angle(base)
+    rotate_compared = get_rotation_angle(compared)
 
-    # повернуть
+    base = base.rotate(rotate_base)
+    compared = compared.rotate(rotate_compared)
 
     # рассчитать размер
 

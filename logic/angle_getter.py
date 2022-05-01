@@ -31,7 +31,7 @@ def get_rotation_angle(input_image: Image) -> int:
     :param input_image: A PIL or cv2 image
     :return: A number of degrees
     """
-    image_ = set_image_dpi(input_image)
+    image_ = set_dpi_and_filter(input_image)
     # не cтавил языки в image_to_osd, тк так результаты точнее
     results = pytesseract.image_to_osd(image_,
                                        config='--psm 0 -c min_characters_to_try=5',

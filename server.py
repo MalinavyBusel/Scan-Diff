@@ -7,7 +7,6 @@ from templates.get_form import GetForm
 
 
 app = Flask(__name__, template_folder="templates")
-app.config['UPLOAD_EXTENSIONS'] = ['.jpg', '.png']
 app.config['MAX_CONTENT_LENGTH'] = 1024 * 1024 * 16 - 1
 app.config['SECRET_KEY'] = 'SECRET_KEY'
 

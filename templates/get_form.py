@@ -8,7 +8,7 @@ class GetForm(FlaskForm):
         'Base Image',
         validators=[
             FileRequired(),
-            FileAllowed(['jpg', 'png'],
+            FileAllowed(['jpg', 'png', 'jpeg'],
                         'Not a valid file extension.')
         ]
     )
@@ -16,7 +16,7 @@ class GetForm(FlaskForm):
         'Compared Image',
         validators=[
             FileRequired(),
-            FileAllowed(['jpg', 'png'],
+            FileAllowed(['jpg', 'png', 'jpeg'],
                         'Not a valid file extension.')
         ]
     )

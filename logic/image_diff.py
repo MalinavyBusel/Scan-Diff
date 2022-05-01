@@ -23,7 +23,12 @@ def process_diff(base: Image, compared: Image):
     base = base.rotate(rotate_base)
     compared = compared.rotate(rotate_compared)
 
-    # рассчитать размер
+    b_w, b_h = base.size
+    h_w, h_h = compared.size
+    # выбрал минимальный размер, чтобы качество не сильно портилось
+    im_size = (min(b_w, h_w), min(b_h, h_h))
+    base = base.resize(im_size, Image.LANCZOS)
+    compared = compared.resize(im_size, Image.LANCZOS)
 
     # сравнить
 

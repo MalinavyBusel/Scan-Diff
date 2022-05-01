@@ -5,6 +5,9 @@ from PIL import Image, ImageFilter
 from pytesseract import Output
 
 
+pytesseract.pytesseract.tesseract_cmd = 'C:/Program Files/Tesseract-OCR/tesseract.exe'  # TODO location в env
+
+
 def set_dpi_and_filter(image: Image) -> Image:
     """
     Rescaling image to 300dpi and filter it to improve the quality of recognition
@@ -34,6 +37,3 @@ def get_rotation_angle(input_image: Image) -> int:
                                        config='--psm 0 -c min_characters_to_try=5',
                                        output_type=Output.DICT)
     return results["rotate"]
-
-
-pytesseract.pytesseract.tesseract_cmd = 'C:/Program Files/Tesseract-OCR/tesseract.exe'  # TODO location в env

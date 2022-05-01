@@ -9,22 +9,21 @@ from templates.get_form import GetForm
 app = Flask(__name__, template_folder="templates")
 app.config['UPLOAD_EXTENSIONS'] = ['.jpg', '.png']
 app.config['MAX_CONTENT_LENGTH'] = 1024 * 1024 * 16 - 1
+app.config['SECRET_KEY'] = 'SECRET_KEY'
 
 
-@app.route('/', methods=['GET', 'POST'])  # TODO версия
+@app.route('/', methods=('GET', 'POST'))  # TODO версия
 def main():
     form = GetForm()
 
     if form.validate_on_submit():
-        pass
-        base = request.files['base_image']
-        compared = request.files['compared_image']
-        return render_template('some_template')
+        base = form.base_image.data
+        compared = form.compared_image.data
+        return render_template('result.html')
 
     return render_template(
         "main_get.jinja2",
-        form=form,
-        template="form-template")
+        form=form)
 
 
 if __name__ == "__main__":

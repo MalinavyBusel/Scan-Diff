@@ -1,15 +1,12 @@
-import tempfile
-
 from flask import Flask
 from flask import request, render_template
 
 from templates.get_form import GetForm
 from logic.image_diff import create_image
 
-
 app = Flask(__name__, template_folder="templates")
 app.config['MAX_CONTENT_LENGTH'] = 1024 * 1024 * 16 - 1
-app.config['SECRET_KEY'] = 'SECRET_KEY' # TODO в енв
+app.config['SECRET_KEY'] = 'SECRET_KEY'  # TODO в енв
 
 
 @app.route('/', methods=('GET', 'POST'))  # TODO версия

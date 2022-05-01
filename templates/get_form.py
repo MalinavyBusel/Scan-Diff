@@ -3,7 +3,7 @@ from flask_wtf.file import FileField, FileRequired, FileAllowed
 from wtforms import SubmitField
 
 
-class GetForm(FlaskForm):
+class ImageForm(FlaskForm):
     base_image = FileField(
         'Base Image',
         validators=[

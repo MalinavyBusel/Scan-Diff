@@ -1,7 +1,7 @@
 from flask import Flask
 from flask import request, render_template
 
-from templates.get_form import GetForm
+from templates.get_form import ImageForm
 from logic.image_diff import create_image
 
 app = Flask(__name__, template_folder="templates")
@@ -11,7 +11,7 @@ app.config['SECRET_KEY'] = 'SECRET_KEY'  # TODO в енв
 
 @app.route('/', methods=('GET', 'POST'))  # TODO версия
 def main():
-    form = GetForm()
+    form = ImageForm()
 
     if form.validate_on_submit():
         base = create_image(form.base_image.data)

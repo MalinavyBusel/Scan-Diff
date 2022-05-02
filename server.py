@@ -2,7 +2,7 @@ from flask import Flask
 from flask import request, render_template
 
 from templates.get_form import ImageForm
-from logic.image_diff import create_image
+from logic.image_diff import create_image, process_diff
 
 app = Flask(__name__, template_folder="templates")
 app.config['MAX_CONTENT_LENGTH'] = 1024 * 1024 * 16 - 1
@@ -16,6 +16,9 @@ def main():
     if form.validate_on_submit():
         base = create_image(form.base_image.data)
         compared = create_image(form.compared_image.data)
+
+        result_pic = process_diff(base, compared)
+
         return render_template('result.html')
 
     return render_template(

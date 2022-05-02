@@ -8,22 +8,26 @@ import diff_match_patch
 from PIL import Image, ImageFilter, ImageDraw
 
 from logic.angle_getter import get_rotation_angle
+from logic.config import settings
 
 
-pytesseract.pytesseract.tesseract_cmd = 'C:/Program Files/Tesseract-OCR/tesseract.exe' # TODO env
+pytesseract.pytesseract.tesseract_cmd = settings['TESSERACT']
 
 
-def create_image(input_file: 'FileStorage') -> Image:
+def create_image(input_file: str) -> Image:
+    image = Image.open(input_file)
+    return image
+
+
+def create_tempfile(input_file: 'FileStorage') -> str:
     suff = input_file.filename.split('.')[-1]
     temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=suff)
     temp_filename = temp_file.name
     input_file.save(temp_filename)
-
-    image = Image.open(temp_filename)
-    return image
+    return temp_filename
 
 
-def process_diff(base: Image, compared: Image):
+def process_diff(base: Image, compared: Image) -> tuple:
     rotate_base = get_rotation_angle(base)
     rotate_compared = get_rotation_angle(compared)
 
@@ -38,7 +42,7 @@ def process_diff(base: Image, compared: Image):
     base = base.resize(im_size, Image.LANCZOS)
     compared = compared.resize(im_size, Image.LANCZOS)
 
-    return get_tesseract_diff(base, compared, im_size)
+    return get_tesseract_diff(base, compared, im_size) # TODO добавить создание файлов
 
 
 def get_pixel_diff(img1: Image, img2: Image, size: tuple) -> tuple:

@@ -4,8 +4,10 @@ import tempfile
 from PIL import Image, ImageFilter
 from pytesseract import Output
 
+from logic.config import settings
 
-pytesseract.pytesseract.tesseract_cmd = 'C:/Program Files/Tesseract-OCR/tesseract.exe'  # TODO location в env
+
+pytesseract.pytesseract.tesseract_cmd = settings['TESSERACT']
 
 
 def set_dpi_and_filter(image: Image) -> Image:

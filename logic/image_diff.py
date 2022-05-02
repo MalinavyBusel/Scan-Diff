@@ -69,7 +69,7 @@ def get_pixel_diff(img1: Image, img2: Image, size: tuple) -> tuple:
             Drawer.rectangle((x1, y1, x1, y1), outline="red", width=1)
         c += 1
 
-    return (img1, img2)
+    return img1, img2
 
 
 def get_tesseract_diff(img1: Image, img2: Image, size: tuple) -> tuple:
@@ -82,17 +82,13 @@ def get_tesseract_diff(img1: Image, img2: Image, size: tuple) -> tuple:
     data_str_1 = re.sub('[ \t\n\r]', '', data_str_1)
 
     box_str_1 = pytesseract.image_to_boxes(img1).splitlines()
-    print(data_str_1)
 
     data_str_2 = pytesseract.image_to_string(img2)
     data_str_2 = re.sub('[ \t\n\r]', '', data_str_2)
 
     box_str_2 = pytesseract.image_to_boxes(img2).splitlines()
-    print(data_str_2)
-
     diff_obj = diff_match_patch.diff_match_patch()
     diffs = diff_obj.diff_main(text1=data_str_1, text2=data_str_2)
-    print(diffs)
 
     # -1 - встречается только в изображении 1, 1 - только в изображении 2
     len1, len2 = 0, 0
@@ -117,4 +113,4 @@ def get_tesseract_diff(img1: Image, img2: Image, size: tuple) -> tuple:
             len1 += len(text)
             len2 += len(text)
 
-    return (img1, img2)
+    return img1, img2

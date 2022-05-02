@@ -33,7 +33,7 @@ def process_diff(base: Image, compared: Image):
     base = base.resize(im_size, Image.LANCZOS)
     compared = compared.resize(im_size, Image.LANCZOS)
 
-    return get_diff(base, compared, im_size)
+    return get_pixel_diff(base, compared, im_size)
 
 
 def get_pixel_diff(data1: Image, data2: Image, size: tuple) -> Image:

@@ -5,7 +5,7 @@ from decouple import config
 
 
 class ServerSettings(BaseSettings):
-    HOST = '0.0.0.0'
+    HOST = 'localhost'
     PORT = 5000
     SECRET_KEY = config('KEY', cast=str)
 

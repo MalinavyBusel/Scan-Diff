@@ -7,7 +7,7 @@ from pytesseract import Output
 from logic.config import settings
 
 
-pytesseract.pytesseract.tesseract_cmd = settings['TESSERACT']
+pytesseract.pytesseract.tesseract_cmd = settings.TESSERACT
 
 
 def set_dpi_and_filter(image: Image) -> Image:

@@ -22,8 +22,8 @@ def process_diff(base: Image, compared: Image) -> tuple:
     rotate_base = get_rotation_angle(base)
     rotate_compared = get_rotation_angle(compared)
 
-    base = base.rotate(rotate_base)
-    compared = compared.rotate(rotate_compared)
+    base = base.rotate(rotate_base, expand=True)
+    compared = compared.rotate(rotate_compared, expand=True)
 
     b_w, b_h = base.size
     h_w, h_h = compared.size
@@ -64,7 +64,7 @@ def get_pixel_diff(img1: Image, img2: Image, size: tuple) -> tuple:
             Drawer.rectangle((x1, y1, x1, y1), outline="red", width=1)
         c += 1
 
-    return img1, img2
+    return img1, img2 # TODO
 
 
 def get_tesseract_diff(img1: Image, img2: Image, size: tuple) -> tuple:

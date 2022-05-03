@@ -6,7 +6,6 @@ from pytesseract import Output
 
 from logic.config import settings
 
-
 pytesseract.pytesseract.tesseract_cmd = settings.TESSERACT
 
 

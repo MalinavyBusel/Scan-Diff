@@ -10,7 +10,6 @@ from PIL import Image, ImageFilter, ImageDraw
 from logic.angle_getter import get_rotation_angle
 from logic.config import settings
 
-
 pytesseract.pytesseract.tesseract_cmd = settings.TESSERACT
 
 
@@ -34,11 +33,11 @@ def process_diff(base: Image, compared: Image) -> tuple:
     base = base.resize(im_size, Image.LANCZOS)
     compared = compared.resize(im_size, Image.LANCZOS)
 
-    return get_tesseract_diff(base, compared, im_size) # TODO добавить создание файлов
+    return get_tesseract_diff(base, compared, im_size)  # TODO добавить создание файлов
 
 
 def get_pixel_diff(img1: Image, img2: Image, size: tuple) -> tuple:
-    img1_L  = img1.convert("L")
+    img1_L = img1.convert("L")
     img2_L = img2.convert("L")
     raw1 = img1_L.getdata()
     raw2 = img2_L.getdata()

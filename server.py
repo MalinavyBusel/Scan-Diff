@@ -14,7 +14,7 @@ app.config['MAX_CONTENT_LENGTH'] = 1024 * 1024 * 16 - 1
 app.config['SECRET_KEY'] = settings.SECRET_KEY
 
 
-@app.route('/', methods=('GET', 'POST'))  # TODO версия
+@app.route('/', methods=('GET', 'POST'))
 def main():
     form = ImageForm()
 
@@ -43,4 +43,5 @@ def main():
 
 if __name__ == "__main__":
     app.run(host=settings.HOST,
-            port=settings.PORT)
+            port=settings.PORT,
+            debug=settings.DEBUG)

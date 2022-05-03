@@ -36,6 +36,6 @@ def get_rotation_angle(input_image: Image) -> int:
     # не cтавил языки в image_to_osd, тк так результаты точнее
     results = pytesseract.image_to_osd(image_,
                                        config='--psm 0 -c min_characters_to_try=5',
-                                       output_type=Output.DICT,
-                                       lang='eng+rus')
+                                       output_type=Output.DICT) # ,
+                                       # lang='eng+rus')
     return results["rotate"]

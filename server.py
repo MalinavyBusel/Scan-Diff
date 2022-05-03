@@ -1,3 +1,4 @@
+from concurrent.futures import ProcessPoolExecutor
 from flask import Flask
 from flask import request, render_template
 from flask_bootstrap import Bootstrap
@@ -13,6 +14,8 @@ bootstrap = Bootstrap(app)
 app.config['MAX_CONTENT_LENGTH'] = 1024 * 1024 * 16 - 1
 app.config['SECRET_KEY'] = settings.SECRET_KEY
 
+executor = ProcessPoolExecutor(max_workers=4)
+
 
 @app.route('/', methods=('GET', 'POST'))
 def main():
@@ -24,7 +27,8 @@ def main():
 
         base = create_image(base_data)
         compared = create_image(compared_data)
-        res_1, res_2 = process_diff(base, compared)
+        pool_process = executor.submit(process_diff, base, compared)
+        res_1, res_2 = pool_process.result()
 
         path1 = path.join('static', base_data.filename)
         imwrite(path1, res_1)

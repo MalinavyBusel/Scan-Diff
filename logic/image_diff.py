@@ -19,6 +19,7 @@ def create_image(input_file: str) -> Image:
 
 
 def process_diff(base: Image, compared: Image) -> tuple:
+    """Rotates, resizes and finds differences between iages"""
     rotate_base = get_rotation_angle(base)
     rotate_compared = get_rotation_angle(compared)
 
@@ -33,10 +34,15 @@ def process_diff(base: Image, compared: Image) -> tuple:
     base = base.resize(im_size, Image.LANCZOS)
     compared = compared.resize(im_size, Image.LANCZOS)
 
-    return get_tesseract_diff(base, compared, im_size)  # TODO добавить создание файлов
+    return get_tesseract_diff(base, compared, im_size)
 
 
 def get_pixel_diff(img1: Image, img2: Image, size: tuple) -> tuple:
+    """
+        Compares two images by pixels. Was done first and is left here just as an alternative.
+        Highlights differences by making different pixels red
+        Better not to use with low-quality pics
+    """
     img1_L = img1.convert("L")
     img2_L = img2.convert("L")
     raw1 = img1_L.getdata()
@@ -64,10 +70,14 @@ def get_pixel_diff(img1: Image, img2: Image, size: tuple) -> tuple:
             Drawer.rectangle((x1, y1, x1, y1), outline="red", width=1)
         c += 1
 
-    return img1, img2 # TODO
+    return numpy.array(img1), numpy.array(img2)
 
 
 def get_tesseract_diff(img1: Image, img2: Image, size: tuple) -> tuple:
+    """
+        Scans images with pytesseract and finds differences between two texts with diff-match-patch
+        Highlights the different symbols with red rectangles
+    """
     img1 = numpy.array(img1)
     img2 = numpy.array(img2)
     i_h = size[1]

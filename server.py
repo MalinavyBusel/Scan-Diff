@@ -1,12 +1,15 @@
 from flask import Flask
 from flask import request, render_template
+from flask_bootstrap import Bootstrap
 from os import path
+from cv2 import imwrite
 
 from templates.get_form import ImageForm
-from logic.image_diff import create_image, process_diff, create_tempfile
+from logic.image_diff import create_image, process_diff
 from logic.config import settings
 
 app = Flask(__name__)
+bootstrap = Bootstrap(app)
 app.config['MAX_CONTENT_LENGTH'] = 1024 * 1024 * 16 - 1
 app.config['SECRET_KEY'] = settings.SECRET_KEY
 
@@ -21,12 +24,12 @@ def main():
 
         base = create_image(base_data)
         compared = create_image(compared_data)
-        # res_1, res_2 = process_diff(base, compared)
+        res_1, res_2 = process_diff(base, compared)
 
         path1 = path.join('static', base_data.filename)
-        base.save(path1)
+        imwrite(path1, res_1)
         path2 = path.join('static', compared_data.filename)
-        compared.save(path2)
+        imwrite(path2, res_2)
 
         return render_template(
             "main_post.jinja2",

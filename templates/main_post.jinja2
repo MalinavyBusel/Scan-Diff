@@ -2,11 +2,11 @@
 
 
 {% block content %}
-
-    <div class="form-wrapper">
+    <div class="one"><h1>EASY SCAN DIFF</h1></div>
+    <div class="form-wrapper" style="margin-left: 10px">
       <h2 class="title">Choose your images</h2>
 
-      <form method="POST" action="/" enctype="multipart/form-data">
+      <form method="POST" action="/" enctype="multipart/form-data" >
 
           <fieldset class="form-field">
               {{ form.base_image.label }}
@@ -29,7 +29,7 @@
 
       </form>
     </div>
-    <div class="column">
+    <div class="column" style="display: flex">
         <img src="{{ img1 }}" alt="base">
         <img src="{{ img2 }}" alt="compared">
     </div>

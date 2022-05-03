@@ -11,20 +11,12 @@ from logic.angle_getter import get_rotation_angle
 from logic.config import settings
 
 
-pytesseract.pytesseract.tesseract_cmd = settings['TESSERACT']
+pytesseract.pytesseract.tesseract_cmd = settings.TESSERACT
 
 
 def create_image(input_file: str) -> Image:
     image = Image.open(input_file)
     return image
-
-
-def create_tempfile(input_file: 'FileStorage') -> str:
-    suff = input_file.filename.split('.')[-1]
-    temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=suff)
-    temp_filename = temp_file.name
-    input_file.save(temp_filename)
-    return temp_filename
 
 
 def process_diff(base: Image, compared: Image) -> tuple:

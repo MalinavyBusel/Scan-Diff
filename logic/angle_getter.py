@@ -42,6 +42,7 @@ def get_rotation_angle(image: Image) -> int:
 
 
 
+
     # OLD VERSION OF get_rotation_angle
     # image_ = set_dpi_and_filter(input_image)
     # # не cтавил языки в image_to_osd, тк так результаты точнее

@@ -24,11 +24,12 @@ def main():
     if form.validate_on_submit():
         base_data = form.base_image.data
         compared_data = form.compared_image.data
+        lang = form.language.data
 
         base = create_image(base_data)
         compared = create_image(compared_data)
-        pool_process = executor.submit(process_diff, base, compared)
-        res_1, res_2 = pool_process.result()
+        pool_process = executor.submit(process_diff, base, compared, lang)
+        res_1, res_2, is_diff = pool_process.result()
 
         path1 = path.join('static', base_data.filename)
         imwrite(path1, res_1)

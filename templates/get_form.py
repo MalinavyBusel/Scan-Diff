@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileRequired, FileAllowed
-from wtforms import SubmitField
+from wtforms import SubmitField, SelectField
 
 
 class ImageForm(FlaskForm):
@@ -20,4 +20,6 @@ class ImageForm(FlaskForm):
                         'Not a valid file extension.')
         ]
     )
+    language = SelectField(u'Programming Language',
+                           choices=[('eng', 'eng'), ('rus', 'rus')])
     submit = SubmitField('Submit')

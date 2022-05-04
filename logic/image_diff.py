@@ -18,7 +18,7 @@ def create_image(input_file: str) -> Image:
     return image
 
 
-def process_diff(base: Image, compared: Image) -> tuple:
+def process_diff(base: Image, compared: Image, lang: str) -> tuple:
     """Rotates, resizes and finds differences between iages"""
     rotate_base = get_rotation_angle(base)
     rotate_compared = get_rotation_angle(compared)
@@ -34,7 +34,7 @@ def process_diff(base: Image, compared: Image) -> tuple:
     base = base.resize(im_size, Image.LANCZOS)
     compared = compared.resize(im_size, Image.LANCZOS)
 
-    return get_tesseract_diff(base, compared, im_size)
+    return get_tesseract_diff(base, compared, im_size, lang)
 
 
 def get_pixel_diff(img1: Image, img2: Image, size: tuple) -> tuple:
@@ -84,7 +84,7 @@ def get_string(img):
     return data_str
 
 
-def get_tesseract_diff(img1: Image, img2: Image, size: tuple) -> tuple:
+def get_tesseract_diff(img1: Image, img2: Image, size: tuple, lang: str) -> tuple:
     """
         Scans images with pytesseract and finds differences between two texts with diff-match-patch
         Highlights the different symbols with red rectangles
@@ -97,17 +97,18 @@ def get_tesseract_diff(img1: Image, img2: Image, size: tuple) -> tuple:
     data_str_1 = get_string(img1)
     data_str_1 = re.sub('[ \t\n\r]', '', data_str_1)
 
-    box_str_1 = pytesseract.image_to_boxes(img1).splitlines()
+    box_str_1 = pytesseract.image_to_boxes(img1, lang=lang).splitlines()
 
     data_str_2 = get_string(img2)
     data_str_2 = re.sub('[ \t\n\r]', '', data_str_2)
 
-    box_str_2 = pytesseract.image_to_boxes(img2).splitlines()
+    box_str_2 = pytesseract.image_to_boxes(img2, lang=lang).splitlines()
     diff_obj = diff_match_patch.diff_match_patch()
     diffs = diff_obj.diff_main(text1=data_str_1, text2=data_str_2)
 
     # -1 - встречается только в изображении 1, 1 - только в изображении 2
     len1, len2 = 0, 0
+    same, differ = 0, 0
     for text_part in diffs:
         text = text_part[1]
 
@@ -117,6 +118,7 @@ def get_tesseract_diff(img1: Image, img2: Image, size: tuple) -> tuple:
                 x, y, w, h = int(box2[1]), int(box2[2]), int(box2[3]), int(box2[4])
                 cv2.rectangle(img2, (x, i_h - y), (w, i_h - h), (0, 0, 255), 1)
             len2 += len(text)
+            differ += len(text)
 
         elif text_part[0] == -1:
             for box1 in box_str_1[len1:(len1 + len(text))]:
@@ -124,9 +126,15 @@ def get_tesseract_diff(img1: Image, img2: Image, size: tuple) -> tuple:
                 x, y, w, h = int(box1[1]), int(box1[2]), int(box1[3]), int(box1[4])
                 cv2.rectangle(img1, (x, i_h - y), (w, i_h - h), (0, 0, 255), 1)
             len1 += len(text)
+            differ += len(text)
 
         elif not text_part[0]:
             len1 += len(text)
             len2 += len(text)
+            same += len(text)
 
-    return img1, img2
+    if same != 0:
+        too_different = True if differ/same > 2 else False
+    else:
+        too_different = True
+    return img1, img2, too_different

@@ -73,6 +73,17 @@ def get_pixel_diff(img1: Image, img2: Image, size: tuple) -> tuple:
     return numpy.array(img1), numpy.array(img2)
 
 
+def get_string(img):
+    data_str = pytesseract.image_to_string(img)
+    i = 0
+    while not data_str and i < 3:
+        img = cv2.rotate(img, cv2.ROTATE_90_CLOCKWISE)
+        data_str = pytesseract.image_to_string(img)
+        i += 1
+
+    return data_str
+
+
 def get_tesseract_diff(img1: Image, img2: Image, size: tuple) -> tuple:
     """
         Scans images with pytesseract and finds differences between two texts with diff-match-patch
@@ -83,12 +94,12 @@ def get_tesseract_diff(img1: Image, img2: Image, size: tuple) -> tuple:
     i_h = size[1]
     i_w = size[0]
 
-    data_str_1 = pytesseract.image_to_string(img1)
+    data_str_1 = get_string(img1)
     data_str_1 = re.sub('[ \t\n\r]', '', data_str_1)
 
     box_str_1 = pytesseract.image_to_boxes(img1).splitlines()
 
-    data_str_2 = pytesseract.image_to_string(img2)
+    data_str_2 = get_string(img2)
     data_str_2 = re.sub('[ \t\n\r]', '', data_str_2)
 
     box_str_2 = pytesseract.image_to_boxes(img2).splitlines()

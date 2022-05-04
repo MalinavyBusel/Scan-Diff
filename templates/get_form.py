@@ -20,6 +20,6 @@ class ImageForm(FlaskForm):
                         'Not a valid file extension.')
         ]
     )
-    language = SelectField(u'Programming Language',
+    language = SelectField(u'Document Language',
                            choices=[('eng', 'eng'), ('rus', 'rus')])
     submit = SubmitField('Submit')

@@ -31,6 +31,7 @@ def main():
         pool_process = executor.submit(process_diff, base, compared, lang)
         res_1, res_2, is_diff = pool_process.result()
 
+        error = 'The pictures are different' if is_diff else ''
         path1 = path.join('static', base_data.filename)
         imwrite(path1, res_1)
         path2 = path.join('static', compared_data.filename)
@@ -39,7 +40,8 @@ def main():
         return render_template(
             "main_post.jinja2",
             form=form,
-            img1=path1, img2=path2)
+            img1=path1, img2=path2,
+            err=error)
 
     return render_template(
         "main_get.jinja2",

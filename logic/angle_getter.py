@@ -24,7 +24,7 @@ def set_dpi_and_filter(image: Image) -> Image:
 
     temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.png')
     temp_filename = temp_file.name
-    pytess_image.save(temp_filename)#, dpi=(300, 300))
+    pytess_image.save(temp_filename, dpi=(300, 300))
     return temp_filename
 
 

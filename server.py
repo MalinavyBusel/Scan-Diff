@@ -1,3 +1,5 @@
+import cv2
+
 from concurrent.futures import ProcessPoolExecutor
 from flask import Flask
 from flask import request, render_template
@@ -32,10 +34,10 @@ def main():
         res_1, res_2, is_diff = pool_process.result()
 
         error = 'The pictures are different' if is_diff else ''
-        path1 = path.join('static', base_data.filename)
-        imwrite(path1, res_1)
-        path2 = path.join('static', compared_data.filename)
-        imwrite(path2, res_2)
+        path1 = path.join('static', base_data.filename.split('.')[0] + '.png')
+        imwrite(path1, cv2.cvtColor(res_1, cv2.COLOR_BGR2RGB), [int(cv2.IMWRITE_PNG_COMPRESSION), 0])
+        path2 = path.join('static', compared_data.filename.split('.')[0] + '.png')
+        imwrite(path2, cv2.cvtColor(res_2, cv2.COLOR_BGR2RGB), [int(cv2.IMWRITE_PNG_COMPRESSION), 0])
 
         return render_template(
             "main_post.jinja2",

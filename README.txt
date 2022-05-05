@@ -13,5 +13,6 @@ supported languages:
 running the server:
     - open in your browser the address "localhost:5000/"
     - select image1 and image2
+    - select your documents language
     - click "submit"
     - [optionally] repeat

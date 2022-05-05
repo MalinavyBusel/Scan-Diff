@@ -114,7 +114,7 @@ def get_tesseract_diff(img1: Image, img2: Image, size: tuple,
             for box2 in box_str_2[len2:(len2 + len(text))]:
                 box2 = box2.split(' ')
                 x, y, w, h = int(box2[1]), int(box2[2]), int(box2[3]), int(box2[4])
-                cv2.rectangle(img2, (x, i_h - y), (w, i_h - h), (255, 0, 0), 1)
+                cv2.rectangle(img2, (x - 1, i_h - y + 1), (w + 1, i_h - h - 2), (255, 0, 0), 1)
             len2 += len(text)
             differ += len(text)
 
@@ -122,7 +122,7 @@ def get_tesseract_diff(img1: Image, img2: Image, size: tuple,
             for box1 in box_str_1[len1:(len1 + len(text))]:
                 box1 = box1.split(' ')
                 x, y, w, h = int(box1[1]), int(box1[2]), int(box1[3]), int(box1[4])
-                cv2.rectangle(img1, (x, i_h - y), (w, i_h - h), (255, 0, 0), 1)
+                cv2.rectangle(img1, (x - 1, i_h - y + 1), (w + 1, i_h - h - 2), (255, 0, 0), 1)
             len1 += len(text)
             differ += len(text)
 
@@ -130,11 +130,11 @@ def get_tesseract_diff(img1: Image, img2: Image, size: tuple,
             for box1 in box_str_1[len1:(len1 + len(text))]:
                 box1 = box1.split(' ')
                 x, y, w, h = int(box1[1]), int(box1[2]), int(box1[3]), int(box1[4])
-                cv2.rectangle(img1, (x, i_h - y), (w, i_h - h), (0, 255, 0), 1)
+                cv2.rectangle(img1, (x - 1, i_h - y + 1), (w + 1, i_h - h - 2), (0, 255, 0), 1)
             for box2 in box_str_2[len2:(len2 + len(text))]:
                 box2 = box2.split(' ')
                 x, y, w, h = int(box2[1]), int(box2[2]), int(box2[3]), int(box2[4])
-                cv2.rectangle(img2, (x, i_h - y), (w, i_h - h), (0, 255, 0), 1)
+                cv2.rectangle(img2, (x - 1, i_h - y + 1), (w + 1, i_h - h - 2), (0, 255, 0), 1)
             len1 += len(text)
             len2 += len(text)
             same += len(text)

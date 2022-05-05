@@ -7,7 +7,7 @@ import imutils
 
 from deskew import determine_skew
 from PIL import Image, ImageFilter, ImageDraw
-from typing import Tuple, Any
+from typing import Tuple, Any, List
 
 from logic.config import settings
 
@@ -19,15 +19,17 @@ def create_image(input_file: str) -> Image:
     return image
 
 
-def process_diff(base: Image, compared: Image, lang: str) -> Tuple[Image, Image, bool]:
+def process_diff(base: Image, compared: Image, lang: str) -> Tuple['Image', 'Image', bool]:
     """Rotates, resizes and finds differences between images"""
     rotate_base = get_rotation_angle(base)
     rotate_compared = get_rotation_angle(compared)
 
     # base = base.rotate(rotate_base, expand=True)
     # compared = compared.rotate(rotate_compared, expand=True)
-    b_w, b_h = base.size
-    h_w, h_h = compared.size
+    b_w: int = base.size[0]
+    b_h: int = base.size[1]
+    h_w: int = compared.size[0]
+    h_h: int = compared.size[1]
     # выбрал минимальный размер, чтобы качество не сильно портилось,
     # да и сравнивать проще
     im_size = (min(b_w, h_w), min(b_h, h_h))
@@ -55,11 +57,11 @@ def get_string(img: numpy.ndarray, lang: str) -> str:
     return data_str
 
 
-def get_tesseract_diff(img1: Image, img2: Image, size: Tuple[Any],
-                       lang: str, angle1: int, angle2: int) -> Tuple[Image, Image, bool]:
+def get_tesseract_diff(img1: Image, img2: Image, size: Tuple[int, int],
+                       lang: str, angle1: int, angle2: int) -> Tuple['Image', 'Image', bool]:
     """
         Scans images with pytesseract and finds differences between two texts with diff-match-patch
-        Highlights the different symbols with red rectangles
+        Highlights the different symbols with red rectangles and same with green
     """
 
     img1 = numpy.array(img1)
@@ -86,31 +88,33 @@ def get_tesseract_diff(img1: Image, img2: Image, size: Tuple[Any],
     for text_part in diffs:
         text = text_part[1]
 
+        def draw_boxes(box_str: List[str], length: int, img: numpy.ndarray, colour: str):
+            colours = {'red': (255, 0, 0), 'green': (0, 255, 0)}
+            for box in box_str[length:(length + len(text))]:
+                box = box.split(' ')
+                x, y, w, h = int(box[1]), int(box[2]), int(box[3]), int(box[4])
+                cv2.rectangle(img,
+                              (x - 1, i_h - y + 1),
+                              (w + 1, i_h - h - 2),
+                              colours[colour], 1)
+            return None
+
         if text_part[0] == 1:
-            for box2 in box_str_2[len2:(len2 + len(text))]:
-                box2 = box2.split(' ')
-                x, y, w, h = int(box2[1]), int(box2[2]), int(box2[3]), int(box2[4])
-                cv2.rectangle(img2, (x - 1, i_h - y + 1), (w + 1, i_h - h - 2), (255, 0, 0), 1)
+            draw_boxes(box_str_2, len2, img2, 'red')
+
             len2 += len(text)
             differ += len(text)
 
         elif text_part[0] == -1:
-            for box1 in box_str_1[len1:(len1 + len(text))]:
-                box1 = box1.split(' ')
-                x, y, w, h = int(box1[1]), int(box1[2]), int(box1[3]), int(box1[4])
-                cv2.rectangle(img1, (x - 1, i_h - y + 1), (w + 1, i_h - h - 2), (255, 0, 0), 1)
+            draw_boxes(box_str_1, len1, img1, 'red')
+
             len1 += len(text)
             differ += len(text)
 
         elif not text_part[0]:
-            for box1 in box_str_1[len1:(len1 + len(text))]:
-                box1 = box1.split(' ')
-                x, y, w, h = int(box1[1]), int(box1[2]), int(box1[3]), int(box1[4])
-                cv2.rectangle(img1, (x - 1, i_h - y + 1), (w + 1, i_h - h - 2), (0, 255, 0), 1)
-            for box2 in box_str_2[len2:(len2 + len(text))]:
-                box2 = box2.split(' ')
-                x, y, w, h = int(box2[1]), int(box2[2]), int(box2[3]), int(box2[4])
-                cv2.rectangle(img2, (x - 1, i_h - y + 1), (w + 1, i_h - h - 2), (0, 255, 0), 1)
+            draw_boxes(box_str_1, len1, img1, 'green')
+            draw_boxes(box_str_2, len2, img2, 'green')
+
             len1 += len(text)
             len2 += len(text)
             same += len(text)
@@ -129,10 +133,10 @@ def get_pixel_diff(img1: Image, img2: Image, size: tuple) -> tuple:
         Highlights differences by making different pixels red
         Better not to use with low-quality pics
     """
-    img1_L = img1.convert("L")
-    img2_L = img2.convert("L")
-    raw1 = img1_L.getdata()
-    raw2 = img2_L.getdata()
+    img1_l = img1.convert("L")
+    img2_l = img2.convert("L")
+    raw1 = img1_l.getdata()
+    raw2 = img2_l.getdata()
 
     # Subtracting pixels
     diff_pix = numpy.subtract(raw1, raw2)

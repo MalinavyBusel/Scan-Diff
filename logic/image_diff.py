@@ -156,8 +156,8 @@ def get_pixel_diff(img1: Image, img2: Image, size: tuple) -> tuple:
             xsub = 2
             ysub = 2
             x1, y1, x2, y2 = max(0, x10 - xsub), max(0, y10 - ysub), x10, y10
-            Drawer = ImageDraw.Draw(img2)
-            Drawer.rectangle((x1, y1, x1, y1), outline="red", width=1)
+            drawer = ImageDraw.Draw(img2)
+            drawer.rectangle((x1, y1, x1, y1), outline="red", width=1)
         c += 1
 
     return numpy.array(img1), numpy.array(img2)

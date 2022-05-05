@@ -10,7 +10,8 @@ supported languages:
     - russian
     - english
 
-running the server:
+usage:
+    - run the server
     - open in your browser the address "localhost:5000/"
     - select image1 and image2
     - select your documents language

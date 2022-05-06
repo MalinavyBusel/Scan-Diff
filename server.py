@@ -6,6 +6,7 @@ from flask import request, render_template
 from flask_bootstrap import Bootstrap
 from os import path
 from cv2 import imwrite
+# from flask_ngrok import run_with_ngrok
 
 from templates.get_form import ImageForm
 from logic.image_diff import create_image, process_diff
@@ -15,6 +16,7 @@ app = Flask(__name__)
 bootstrap = Bootstrap(app)
 app.config['MAX_CONTENT_LENGTH'] = 1024 * 1024 * 16 - 1
 app.config['SECRET_KEY'] = settings.SECRET_KEY
+# run_with_ngrok(app)
 
 executor = ProcessPoolExecutor(max_workers=4)
 

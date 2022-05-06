@@ -11,7 +11,7 @@ from typing import Tuple, Any, List
 from logic.config import settings
 from logic.skew_logic import determine_skew
 
-pytesseract.pytesseract.tesseract_cmd = settings.TESSERACT
+# pytesseract.pytesseract.tesseract_cmd = settings.TESSERACT
 
 
 def create_image(input_file: str) -> Image:

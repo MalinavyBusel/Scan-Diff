@@ -5,11 +5,11 @@ import pytesseract
 import diff_match_patch
 import imutils
 
-from deskew import determine_skew
 from PIL import Image, ImageFilter, ImageDraw
 from typing import Tuple, Any, List
 
 from logic.config import settings
+from logic.skew_logic import determine_skew
 
 pytesseract.pytesseract.tesseract_cmd = settings.TESSERACT
 

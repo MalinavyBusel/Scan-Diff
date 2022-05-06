@@ -1,6 +1,7 @@
-to install the python modules required, run in cmd:
-    "pip install -r requirements.txt"
-    !!!!!replace the code from __init__ file of alyn package
+to install the all requirements, run in cmd:
+    - from https://github.com/tesseract-ocr/tessdoc download and install tesseract
+    - "pip install -r requirements.txt"
+    - !!!!!replace the code from __init__ file of alyn package
          with the code from logic/skew_logic
          to solve the problems with compatibility
 

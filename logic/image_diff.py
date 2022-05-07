@@ -92,11 +92,15 @@ def get_tesseract_diff(img1: Image, img2: Image, size: Tuple[int, int],
             colours = {'red': (255, 0, 0), 'green': (0, 255, 0)}
             for box in box_str[length:(length + len(text))]:
                 box = box.split(' ')
-                x, y, w, h = int(box[1]), int(box[2]), int(box[3]), int(box[4])
-                cv2.rectangle(img,
-                              (x - 1, i_h - y + 1),
-                              (w + 1, i_h - h - 2),
-                              colours[colour], 1)
+                x, y, x2, y2 = int(box[1]), int(box[2]), int(box[3]), int(box[4])
+                w = x2 - x + 1
+                h = y2 - y + 1
+                is_char = box[0].isalpha() or box[0].isnumeric()
+                if w / h < 2.5 and h / w < 2.5 and is_char:
+                    cv2.rectangle(img,
+                                  (x - 1, i_h - y + 1),
+                                  (x2 + 1, i_h - y2 - 2),
+                                  colours[colour], 1)
             return None
 
         if text_part[0] == 1:
@@ -120,7 +124,7 @@ def get_tesseract_diff(img1: Image, img2: Image, size: Tuple[int, int],
             same += len(text)
 
     if same != 0:
-        too_different = True if differ/same > 2 else False
+        too_different = True if differ / same > 2 else False
     else:
         too_different = True
     return img1, img2, too_different

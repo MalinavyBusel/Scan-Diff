@@ -181,7 +181,7 @@ def get_tesseract_diff(img1: Image, img2: Image, size: Tuple[int, int],
         too_different = True if differ / same > 2 else False
     else:
         too_different = True
-    return img1, img2, too_different, linkdata_1, linkdata_2  # TODO add to return
+    return img1, img2, too_different, linkdata_1, linkdata_2
 
 
 # OLD VERSION

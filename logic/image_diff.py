@@ -11,6 +11,7 @@ from typing import Tuple, Any, List
 from logic.config import settings
 from logic.skew_logic import determine_skew
 
+
 # pytesseract.pytesseract.tesseract_cmd = settings.TESSERACT
 
 
@@ -19,7 +20,8 @@ def create_image(input_file: str) -> Image:
     return image
 
 
-def process_diff(base: Image, compared: Image, lang: str) -> Tuple['Image', 'Image', bool]:
+def process_diff(base: Image, compared: Image, lang: str
+                 ) -> Tuple['Image', 'Image', bool, list, list]:
     """Rotates, resizes and finds differences between images"""
     rotate_base = get_rotation_angle(base)
     rotate_compared = get_rotation_angle(compared)
@@ -58,7 +60,8 @@ def get_string(img: numpy.ndarray, lang: str) -> str:
 
 
 def get_tesseract_diff(img1: Image, img2: Image, size: Tuple[int, int],
-                       lang: str, angle1: int, angle2: int) -> Tuple['Image', 'Image', bool]:
+                       lang: str, angle1: int, angle2: int
+                       ) -> Tuple['Image', 'Image', bool, list, list]:
     """
         Scans images with pytesseract and finds differences between two texts with diff-match-patch
         Highlights the different symbols with red rectangles and same with green
@@ -69,6 +72,7 @@ def get_tesseract_diff(img1: Image, img2: Image, size: Tuple[int, int],
     img2 = numpy.array(img2)
     img2 = imutils.rotate(img2, angle2)
     i_h = size[1]
+    r_r = min(660 / i_h, 1)  # r_r means resize_ratio
 
     data_str_1 = get_string(img1, lang)
     data_str_1 = re.sub('[ \t\n\r]', '', data_str_1)
@@ -85,32 +89,79 @@ def get_tesseract_diff(img1: Image, img2: Image, size: Tuple[int, int],
     # -1 - встречается только в изображении 1, 1 - только в изображении 2
     len1, len2 = 0, 0
     same, differ = 0, 0
+    linkdata_1, linkdata_2 = [], []
     for text_part in diffs:
         text = text_part[1]
+
+        def validate_box(symb: str,
+                         x: str, y: str,
+                         x2: str, y2: str,
+                         *args) -> bool:
+            w = int(x2) - int(x) + 1
+            h = int(y2) - int(y) + 1
+            is_char = symb.isalpha() or symb.isnumeric()
+            return w / h < 2.5 and h / w < 2.5 and is_char
 
         def draw_box(box_str: List[str], length: int, img: numpy.ndarray, colour: str):
             colours = {'red': (255, 0, 0), 'green': (0, 255, 0)}
             for box in box_str[length:(length + len(text))]:
                 box = box.split(' ')
                 x, y, x2, y2 = int(box[1]), int(box[2]), int(box[3]), int(box[4])
-                w = x2 - x + 1
-                h = y2 - y + 1
-                is_char = box[0].isalpha() or box[0].isnumeric()
-                if w / h < 2.5 and h / w < 2.5 and is_char:
+                if validate_box(*box):
                     cv2.rectangle(img,
                                   (x - 1, i_h - y + 1),
                                   (x2 + 1, i_h - y2 - 2),
                                   colours[colour], 1)
             return None
 
+        # writes data to list to use it in html
+        def write_one(box_str: List[str],
+                      length: int,
+                      append_to: list):
+            for box in box_str[length:(length + len(text))]:
+                box = box.split(' ')
+                x, y, x2, y2 = int(box[1]), i_h - int(box[2]), int(box[3]), i_h - int(box[4])
+                x, y, x2, y2 = int(x * r_r), int(y * r_r), int(x2 * r_r), int(y2 * r_r)
+                if validate_box(*box):
+                    data = [symbol, 'red', x, y, x1, y1]
+                    append_to.append(data)
+            return None
+
+        def write_both(box_str1: List[str],
+                       len_1: int,
+                       box_str2: List[str],
+                       len_2: int,
+                       append_to_1: list,
+                       append_to_2: list):
+            seq_1 = box_str1[len_1:(len_1 + len(text))]
+            seq_2 = box_str2[len_2:(len_2 + len(text))]
+            for boxes in zip(seq_1, seq_2):
+                box_1 = boxes[0].split()
+                box_2 = boxes[1].split()
+                if validate_box(*box_1) and validate_box(*box_2):
+                    coords_1 = int(box_1[1]), i_h - int(box_1[2]), int(box_1[3]), i_h - int(box_1[4])
+                    coords_1 = int(coords_1[0] * r_r), int(coords_1[1] * r_r), \
+                               int(coords_1[2] * r_r), int(coords_1[3] * r_r)
+                    coords_2 = int(box_2[1]), i_h - int(box_2[2]), int(box_2[3]), i_h - int(box_2[4])
+                    coords_2 = int(coords_2[0] * r_r), int(coords_2[1] * r_r), \
+                               int(coords_2[2] * r_r), int(coords_2[3] * r_r)
+                    symbol = box_1[0]
+                    data = [symbol, 'green', *coords_1, *coords_2]
+                    append_to_1.append(data)
+                    data = [symbol, 'green', *coords_2, *coords_1]
+                    append_to_2.append(data)
+            return None
+
         if text_part[0] == 1:
             draw_box(box_str_2, len2, img2, 'red')
+            write_one(box_str_2, len2, linkdata_2)
 
             len2 += len(text)
             differ += len(text)
 
         elif text_part[0] == -1:
             draw_box(box_str_1, len1, img1, 'red')
+            write_one(box_str_1, len1, linkdata_1)
 
             len1 += len(text)
             differ += len(text)
@@ -118,6 +169,9 @@ def get_tesseract_diff(img1: Image, img2: Image, size: Tuple[int, int],
         elif not text_part[0]:
             draw_box(box_str_1, len1, img1, 'green')
             draw_box(box_str_2, len2, img2, 'green')
+            write_both(box_str_1, len1,
+                       box_str_2, len2,
+                       linkdata_1, linkdata_2)
 
             len1 += len(text)
             len2 += len(text)
@@ -127,12 +181,12 @@ def get_tesseract_diff(img1: Image, img2: Image, size: Tuple[int, int],
         too_different = True if differ / same > 2 else False
     else:
         too_different = True
-    return img1, img2, too_different
+    return img1, img2, too_different, linkdata_1, linkdata_2  # TODO add to return
 
 
+# OLD VERSION
 def get_pixel_diff(img1: Image, img2: Image, size: tuple) -> tuple:
     """
-        OLD VERSION
         Compares two images by pixels. Was done first and is left here just as an alternative.
         Highlights differences by making different pixels red
         Better not to use with low-quality pics

@@ -3,11 +3,34 @@
 
 {% block content %}
     <div class="one"><h1>EASY SCAN DIFF</h1></div>
+    <script src="../static/js/image_proc.js"></script>
+    <div class="column" style="display: flex; align-items: center; justify-content: center; margin-top: 10px">
+        <form name = "image_inf">
+            <input type = "text" name = "im1" size = "40" />
+            <input type = "text" name = "im2" size = "40" />
+        </form>
+    </div>
     <div class="column" style="display: flex; align-items: center; justify-content: center">
-        <img src="{{ img1 }}" alt="base" style="image-rendering: high-quality">
-        <img src="{{ img2 }}" alt="compared" style="image-rendering: high-quality">
+        <map name="map1">
+            {% for inf in link_d_1 %}
+                <area coords="{{ inf[2] }},{{ inf[3] }},{{ inf[4] }},{{ inf[5] }}"
+                target = "_self"
+                onMouseOver = "showText('{{ inf[0] }}')"/>
+            {% endfor %}
+        </map>
+        <img src="{{ img1 }}" alt="base" usemap="#map1" style="image-rendering: high-quality">
+
+        <map name="map2">
+            {% for inf in link_d_2 %}
+                <area coords="{{ inf[2] }},{{ inf[3] }},{{ inf[4] }},{{ inf[5] }}"
+                target = "_self"
+                onMouseOver = "showText('{{ inf[0] }}')"/>
+            {% endfor %}
+        </map>
+        <img src="{{ img2 }}" alt="compared" usemap="#map2" style="image-rendering: high-quality">
     </div>
     <h1 style="color: cornflowerblue">{{ err }}</h1>
+
     <div class="form-wrapper" style="margin-left: 10px">
       <h2 class="title">Choose your images</h2>
 

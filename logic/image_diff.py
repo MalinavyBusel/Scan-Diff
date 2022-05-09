@@ -88,7 +88,7 @@ def get_tesseract_diff(img1: Image, img2: Image, size: Tuple[int, int],
     for text_part in diffs:
         text = text_part[1]
 
-        def draw_boxes(box_str: List[str], length: int, img: numpy.ndarray, colour: str):
+        def draw_box(box_str: List[str], length: int, img: numpy.ndarray, colour: str):
             colours = {'red': (255, 0, 0), 'green': (0, 255, 0)}
             for box in box_str[length:(length + len(text))]:
                 box = box.split(' ')
@@ -104,20 +104,20 @@ def get_tesseract_diff(img1: Image, img2: Image, size: Tuple[int, int],
             return None
 
         if text_part[0] == 1:
-            draw_boxes(box_str_2, len2, img2, 'red')
+            draw_box(box_str_2, len2, img2, 'red')
 
             len2 += len(text)
             differ += len(text)
 
         elif text_part[0] == -1:
-            draw_boxes(box_str_1, len1, img1, 'red')
+            draw_box(box_str_1, len1, img1, 'red')
 
             len1 += len(text)
             differ += len(text)
 
         elif not text_part[0]:
-            draw_boxes(box_str_1, len1, img1, 'green')
-            draw_boxes(box_str_2, len2, img2, 'green')
+            draw_box(box_str_1, len1, img1, 'green')
+            draw_box(box_str_2, len2, img2, 'green')
 
             len1 += len(text)
             len2 += len(text)

@@ -12,7 +12,7 @@ from logic.config import settings
 from logic.skew_logic import determine_skew
 
 
-# pytesseract.pytesseract.tesseract_cmd = settings.TESSERACT
+pytesseract.pytesseract.tesseract_cmd = settings.TESSERACT
 
 
 def create_image(input_file: str) -> Image:
@@ -72,7 +72,7 @@ def get_tesseract_diff(img1: Image, img2: Image, size: Tuple[int, int],
     img2 = numpy.array(img2)
     img2 = imutils.rotate(img2, angle2)
     i_h = size[1]
-    r_r = min(660 / i_h, 1)  # r_r means resize_ratio
+    r_r = min(600 / i_h, 1)  # r_r means resize_ratio
 
     data_str_1 = get_string(img1, lang)
     data_str_1 = re.sub('[ \t\n\r]', '', data_str_1)
@@ -83,6 +83,8 @@ def get_tesseract_diff(img1: Image, img2: Image, size: Tuple[int, int],
     data_str_2 = re.sub('[ \t\n\r]', '', data_str_2)
 
     box_str_2 = pytesseract.image_to_boxes(img2, lang=lang).splitlines()
+
+    # getting the diff between texts
     diff_obj = diff_match_patch.diff_match_patch()
     diffs = diff_obj.diff_main(text1=data_str_1, text2=data_str_2)
 
@@ -123,7 +125,8 @@ def get_tesseract_diff(img1: Image, img2: Image, size: Tuple[int, int],
                 x, y, x2, y2 = int(box[1]), i_h - int(box[2]), int(box[3]), i_h - int(box[4])
                 x, y, x2, y2 = int(x * r_r), int(y * r_r), int(x2 * r_r), int(y2 * r_r)
                 if validate_box(*box):
-                    data = [symbol, 'red', x, y, x1, y1]
+                    symbol = box[0]
+                    data = [symbol, 'red', x, y, x2, y2]
                     append_to.append(data)
             return None
 

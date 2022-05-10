@@ -12,7 +12,7 @@ from logic.config import settings
 from logic.skew_logic import determine_skew
 
 
-pytesseract.pytesseract.tesseract_cmd = settings.TESSERACT
+# pytesseract.pytesseract.tesseract_cmd = settings.TESSERACT
 
 
 def create_image(input_file: str) -> Image:
@@ -149,9 +149,9 @@ def get_tesseract_diff(img1: Image, img2: Image, size: Tuple[int, int],
                     coords_2 = int(coords_2[0] * r_r), int(coords_2[1] * r_r), \
                                int(coords_2[2] * r_r), int(coords_2[3] * r_r)
                     symbol = box_1[0]
-                    data = [symbol, 'green', *coords_1, *coords_2]
+                    data = [symbol, 'green', *coords_1]
                     append_to_1.append(data)
-                    data = [symbol, 'green', *coords_2, *coords_1]
+                    data = [symbol, 'green', *coords_2]
                     append_to_2.append(data)
             return None
 

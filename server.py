@@ -35,6 +35,7 @@ def main():
         pool_process = executor.submit(process_diff, base, compared, lang)
         res_1, res_2, is_diff, linkdata_1, linkdata_2 = pool_process.result()
 
+        # setting up the parameters for rendering
         error = 'The pictures are different' if is_diff else ''
         path1 = path.join('static', base_data.filename.split('.')[0] + '.png')
         imwrite(path1, cv2.cvtColor(res_1, cv2.COLOR_BGR2RGB), [int(cv2.IMWRITE_PNG_COMPRESSION), 0])

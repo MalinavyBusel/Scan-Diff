@@ -80,17 +80,21 @@ def get_tesseract_diff(img1: Image, img2: Image, size: Tuple[int, int],
 
     data_str_1 = get_string(img1, lang)
     data_str_1 = re.sub('[ \t\n\r]', '', data_str_1)
+    data_str_1 = ''.join([char_ for char_ in data_str_1 if char_[0].isalpha() or char_[0].isnumeric()])
 
     box_str_1 = pytesseract.image_to_boxes(img1, lang=lang).splitlines()
+    box_str_1 = [char_str for char_str in box_str_1 if char_str[0].isalpha() or char_str[0].isnumeric()]
 
     data_str_2 = get_string(img2, lang)
     data_str_2 = re.sub('[ \t\n\r]', '', data_str_2)
+    data_str_2 = ''.join([char_ for char_ in data_str_2 if char_[0].isalpha() or char_[0].isnumeric()])
 
     box_str_2 = pytesseract.image_to_boxes(img2, lang=lang).splitlines()
+    box_str_2 = [char_str for char_str in box_str_2 if char_str[0].isalpha() or char_str[0].isnumeric()]
 
     # getting the diff between texts
     diff_obj = diff_match_patch.diff_match_patch()
-    diffs = diff_obj.diff_main(text1=data_str_1, text2=data_str_2)
+    diffs = diff_obj.diff_main(text1=data_str_1, text2=data_str_2, checklines=False)
 
     # -1 - встречается только в изображении 1, 1 - только в изображении 2
     len1, len2 = 0, 0
@@ -105,8 +109,7 @@ def get_tesseract_diff(img1: Image, img2: Image, size: Tuple[int, int],
                          *args) -> bool:
             w = int(x2) - int(x) + 1
             h = int(y2) - int(y) + 1
-            is_char = symb.isalpha() or symb.isnumeric()
-            return w / h < 2.5 and h / w < 2.5 and is_char
+            return w / h < 2.5 and h / w < 2.5
 
         def draw_box(box_str: List[str], length: int, img: numpy.ndarray, colour: str):
             colours = {'red': (255, 0, 0), 'green': (0, 255, 0)}

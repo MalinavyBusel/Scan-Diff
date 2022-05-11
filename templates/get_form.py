@@ -21,5 +21,5 @@ class ImageForm(FlaskForm):
         ]
     )
     language = SelectField(u'Document Language',
-                           choices=[('eng', 'eng'), ('rus', 'rus')])
+                           choices=[('eng', 'eng'), ('eng+rus', 'rus')])
     submit = SubmitField('Submit')

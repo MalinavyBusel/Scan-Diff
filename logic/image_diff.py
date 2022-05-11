@@ -5,7 +5,7 @@ import pytesseract
 import diff_match_patch
 import imutils
 
-from PIL import Image, ImageFilter, ImageDraw
+from PIL import Image, ImageFilter, ImageDraw, ImageOps
 from typing import Tuple, Any, List
 
 from logic.config import settings
@@ -17,6 +17,10 @@ pytesseract.pytesseract.tesseract_cmd = settings.TESSERACT
 
 def create_image(input_file: str) -> Image:
     image = Image.open(input_file)
+
+    # rotating image to it's eif orientation, if there is any
+    image = ImageOps.exif_transpose(image)
+
     return image
 
 

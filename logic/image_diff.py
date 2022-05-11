@@ -12,7 +12,7 @@ from logic.config import settings
 from logic.skew_logic import determine_skew
 
 
-# pytesseract.pytesseract.tesseract_cmd = settings.TESSERACT
+pytesseract.pytesseract.tesseract_cmd = settings.TESSERACT
 
 
 def create_image(input_file: str) -> Image:
@@ -72,7 +72,7 @@ def get_tesseract_diff(img1: Image, img2: Image, size: Tuple[int, int],
     img2 = numpy.array(img2)
     img2 = imutils.rotate(img2, angle2)
     i_h = size[1]
-    r_r = min(600 / i_h, 1)  # r_r means resize_ratio
+    r_r = min(660 / i_h, 1)  # r_r means resize_ratio
 
     data_str_1 = get_string(img1, lang)
     data_str_1 = re.sub('[ \t\n\r]', '', data_str_1)
@@ -119,52 +119,28 @@ def get_tesseract_diff(img1: Image, img2: Image, size: Tuple[int, int],
         # writes data to list to use it in html
         def write_one(box_str: List[str],
                       length: int,
-                      append_to: list):
+                      append_to: list,
+                      color: str):
             for box in box_str[length:(length + len(text))]:
                 box = box.split(' ')
                 x, y, x2, y2 = int(box[1]), i_h - int(box[2]), int(box[3]), i_h - int(box[4])
                 x, y, x2, y2 = int(x * r_r), int(y * r_r), int(x2 * r_r), int(y2 * r_r)
                 if validate_box(*box):
                     symbol = box[0]
-                    data = [symbol, 'red', x, y, x2, y2]
+                    data = [symbol, color, x, y, x2, y2]
                     append_to.append(data)
-            return None
-
-        def write_both(box_str1: List[str],
-                       len_1: int,
-                       box_str2: List[str],
-                       len_2: int,
-                       append_to_1: list,
-                       append_to_2: list):
-            seq_1 = box_str1[len_1:(len_1 + len(text))]
-            seq_2 = box_str2[len_2:(len_2 + len(text))]
-            for boxes in zip(seq_1, seq_2):
-                box_1 = boxes[0].split()
-                box_2 = boxes[1].split()
-                if validate_box(*box_1) and validate_box(*box_2):
-                    coords_1 = int(box_1[1]), i_h - int(box_1[2]), int(box_1[3]), i_h - int(box_1[4])
-                    coords_1 = int(coords_1[0] * r_r), int(coords_1[1] * r_r), \
-                               int(coords_1[2] * r_r), int(coords_1[3] * r_r)
-                    coords_2 = int(box_2[1]), i_h - int(box_2[2]), int(box_2[3]), i_h - int(box_2[4])
-                    coords_2 = int(coords_2[0] * r_r), int(coords_2[1] * r_r), \
-                               int(coords_2[2] * r_r), int(coords_2[3] * r_r)
-                    symbol = box_1[0]
-                    data = [symbol, 'green', *coords_1]
-                    append_to_1.append(data)
-                    data = [symbol, 'green', *coords_2]
-                    append_to_2.append(data)
             return None
 
         if text_part[0] == 1:
             draw_box(box_str_2, len2, img2, 'red')
-            write_one(box_str_2, len2, linkdata_2)
+            write_one(box_str_2, len2, linkdata_2, 'red')
 
             len2 += len(text)
             differ += len(text)
 
         elif text_part[0] == -1:
             draw_box(box_str_1, len1, img1, 'red')
-            write_one(box_str_1, len1, linkdata_1)
+            write_one(box_str_1, len1, linkdata_1, 'red')
 
             len1 += len(text)
             differ += len(text)
@@ -172,9 +148,8 @@ def get_tesseract_diff(img1: Image, img2: Image, size: Tuple[int, int],
         elif not text_part[0]:
             draw_box(box_str_1, len1, img1, 'green')
             draw_box(box_str_2, len2, img2, 'green')
-            write_both(box_str_1, len1,
-                       box_str_2, len2,
-                       linkdata_1, linkdata_2)
+            write_one(box_str_1, len1, linkdata_1, 'green')
+            write_one(box_str_2, len2, linkdata_2, 'green')
 
             len1 += len(text)
             len2 += len(text)

@@ -13,19 +13,19 @@
     </div>
     <div class="column" style="display: flex; align-items: center; justify-content: center">
         <map name="map1">
-            {% for inf in link_d_1 %}
-                <area coords="{{ inf[2] }},{{ inf[3] }},{{ inf[4] }},{{ inf[5] }}"
+            {% for inf1 in link_d_1 %}
+                <area coords="{{ inf1[2] }},{{ inf1[3] }},{{ inf1[4] }},{{ inf1[5] }}"
                 target = "_self"
-                onclick = "showText('{{ inf[0] }}', '1', '{{ inf[1] }}')"/>
+                onclick = "showText('{{ inf1[0] }}', '1', '{{ inf1[1] }}')"/>
             {% endfor %}
         </map>
         <img src="{{ img1 }}" alt="base" usemap="#map1" style="image-rendering: high-quality" onclick="showTextBoth(' ')">
 
         <map name="map2">
-            {% for inf in link_d_2 %}
-                <area coords="{{ inf[2] }},{{ inf[3] }},{{ inf[4] }},{{ inf[5] }}"
+            {% for inf2 in link_d_2 %}
+                <area coords="{{ inf2[2] }},{{ inf2[3] }},{{ inf2[4] }},{{ inf2[5] }}"
                 target = "_self"
-                onclick = "showText('{{ inf[0] }}', '2', '{{ inf[1] }}')"/>
+                onclick = "showText('{{ inf2[0] }}', '2', '{{ inf2[1] }}')"/>
             {% endfor %}
         </map>
         <img src="{{ img2 }}" alt="compared" usemap="#map2" style="image-rendering: high-quality" onclick="showTextBoth(' ')">

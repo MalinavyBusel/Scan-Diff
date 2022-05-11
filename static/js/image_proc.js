@@ -18,8 +18,3 @@ function showText(name, pic_num, colour) {
         showTextOne(name, pic_num)
     }
 }
-
-function cleanText() {
-    document.image_inf.im1.value = ''
-    document.image_inf.im2.value = ''
-}

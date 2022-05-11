@@ -8,7 +8,7 @@ class ServerSettings(BaseSettings):
     HOST = '0.0.0.0'
     PORT = 5000
     DEBUG = False
-    SECRET_KEY = 'SECRET_KEY'
+    SECRET_KEY = config('KEY', cast=str)
 
 
 class LogicSettings(BaseSettings):

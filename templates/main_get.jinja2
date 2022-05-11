@@ -5,7 +5,7 @@
     <div class="one"><h1>EASY SCAN DIFF</h1></div>
     <div class="form-wrapper" style="margin-left: 10px">
       <h2 class="title">Choose your images</h2>
-      <form method="POST" action="/" enctype="multipart/form-data">
+      <form method="POST" action="" enctype="multipart/form-data">
 
           <fieldset class="form-field">
               {{ form.base_image.label }}
@@ -29,9 +29,9 @@
                 <ul class="errors">{% for error in form.compared_image.errors %}<li>{{ error }}</li>{% endfor %}</ul>
               {% endif %}
           </fieldset>
+          {{ form.submit }}
           {{ form.csrf_token }}
 
-          {{ form.submit }}
 
       </form>
     </div>
